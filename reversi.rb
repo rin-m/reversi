@@ -198,6 +198,94 @@ class Board
     return dir
   end
 
+  def flipDisks(x1, y1)
+    dir = @movableDir[x1][y1]
+    @rawBoard[x1][y1] = @current_color
+
+    # 上
+    x = x1
+    y = y1
+    if (dir & UPPER) != NONE
+      while @rawBoard[x][y-1] != @current_color
+        y = y - 1
+        @rawBoard[x][y] = @current_color
+      end
+    end
+
+    # 下
+    x = x1
+    y = y1
+    if (dir & LOWER) != NONE
+      while @rawBoard[x][y+1] != @current_color
+        y = y + 1
+        @rawBoard[x][y] = @current_color
+      end
+    end
+
+    # 左
+    x = x1
+    y = y1
+    if (dir & LEFT) != NONE
+      while @rawBoard[x-1][y] != @current_color
+        x = x - 1
+        @rawBoard[x][y] = @current_color
+      end
+    end
+
+    # 右
+    x = x1
+    y = y1
+    if (dir & RIGHT) != NONE
+      while @rawBoard[x+1][y] != @current_color
+        x = x + 1
+        @rawBoard[x][y] = @current_color
+      end
+    end
+
+    # 右上
+    x = x1
+    y = y1
+    if (dir & RIGHT) != NONE
+      while @rawBoard[x+1][y-1] != @current_color
+        x = x + 1
+        y = y - 1
+        @rawBoard[x][y] = @current_color
+      end
+    end
+
+    # 左上
+    x = x1
+    y = y1
+    if (dir & RIGHT) != NONE
+      while @rawBoard[x-1][y-1] != @current_color
+        x = x - 1
+        y = y - 1
+        @rawBoard[x][y] = @current_color
+      end
+    end
+
+    # 左下
+    x = x1
+    y = y1
+    if (dir & RIGHT) != NONE
+      while @rawBoard[x-1][y+1] != @current_color
+        x = x - 1
+        y = y + 1
+        @rawBoard[x][y] = @current_color
+      end
+    end
+
+    # 右下
+    x = x1
+    y = y1
+    if (dir & RIGHT) != NONE
+      while @rawBoard[x+1][y+1] != @current_color
+        x = x + 1
+        y = y + 1
+        @rawBoard[x][y] = @current_color
+      end
+    end
+
   # ここに move と loop の定義を追加
   # 石を置き，ひっくり返す
   def move(x,y)
@@ -205,7 +293,7 @@ class Board
       return false
     end
 
-    #    self.flipDisks(x,y)
+    self.flipDisks(x,y)
     @rawBoard[x][y] = @current_color
       
     @turns += 1
