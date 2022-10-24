@@ -245,7 +245,7 @@ class Board
     # 右上
     x = x1
     y = y1
-    if (dir & RIGHT) != NONE
+    if (dir & UPPER_RIGHT) != NONE
       while @rawBoard[x+1][y-1] != @current_color
         x = x + 1
         y = y - 1
@@ -256,7 +256,7 @@ class Board
     # 左上
     x = x1
     y = y1
-    if (dir & RIGHT) != NONE
+    if (dir & UPPER_LEFT) != NONE
       while @rawBoard[x-1][y-1] != @current_color
         x = x - 1
         y = y - 1
@@ -267,7 +267,7 @@ class Board
     # 左下
     x = x1
     y = y1
-    if (dir & RIGHT) != NONE
+    if (dir & LOWER_LEFT) != NONE
       while @rawBoard[x-1][y+1] != @current_color
         x = x - 1
         y = y + 1
@@ -278,13 +278,14 @@ class Board
     # 右下
     x = x1
     y = y1
-    if (dir & RIGHT) != NONE
+    if (dir & LOWER_RIGHT) != NONE
       while @rawBoard[x+1][y+1] != @current_color
         x = x + 1
         y = y + 1
         @rawBoard[x][y] = @current_color
       end
     end
+  end
 
   # ここに move と loop の定義を追加
   # 石を置き，ひっくり返す
