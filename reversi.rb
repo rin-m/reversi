@@ -405,9 +405,15 @@ class Board
     rect.configure(fill: "#00aa00")
 
     # 8x8=64個のマスを描く
-
+    for x in 0..BOARDSIZE-1 do
+      for y in 0..BOARDSIZE-1 do
+        rect = TkcRectangle.new(canvas, MARGIN+SWIDTH*x, MARGIN+SWIDTH*y, MARGIN+SWIDTH*(x+1), MARGIN+SWIDTH*(y+1))
+        rect.configure(fill: "#00aa00")
+      end
+    end
   end
 
+=begin
   # 「盤を描画して，手を入力をしてもらう」のを繰り返す（暫定テキスト版）
   def loop()
     while true do
@@ -486,6 +492,7 @@ class Board
       move(x,y)
     end
   end
+=end
 
 end
 
