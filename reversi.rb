@@ -1,5 +1,14 @@
 # coding: utf-8
 
+require "tk"
+
+# マス（盤の1区画）の幅
+SWIDTH = 70
+# 盤の周囲マージン（座標の数字を書くスペース）
+MARGIN = 20
+# メッセ―ジの表示領域の高さ（盤の下の空白領域）
+MHEIGHT = 80
+
 # 盤に配置する石，壁，空白
 BLACK = 1
 WHITE = -1
@@ -354,7 +363,51 @@ class Board
       
     return true
   end
-        
+
+  def makeWindow
+    # 盤の幅と高さ
+    w = SWIDTH * 8 + MARGIN * 2
+    h = SWIDTH * 8 + MARGIN * 2
+
+    # ルートウィンドウ
+    top = TkRoot.new(title: "Othello", width: w, height: h + MHEIGHT)
+
+    # 盤を描くためのキャンバス
+    canvas = TkCanvas.new(top, width: w, height: h, borderwidth: 0, highlightthickness: 0, background: "darkgreen").place("x" => 0, "y" => 0)
+
+    # 盤の周囲の文字
+    for i in 0..BOARDSIZE-1 do
+      TkcText.new(canvas, i*SWIDTH + SWIDTH/2 + MARGIN - 4, MARGIN - 10, text: ("a".ord + i).chr, fill: "white")
+      TkcText.new(canvas, 10, i*SWIDTH + SWIDTH/2 + MARGIN, text: (i+1).to_s, fill: "white")
+    end
+
+    # 8x8のマス目を描く
+    self.drawBoard(canvas)
+
+    # 動作確認用メッセージの表示領域, TkTextでテキストを表示
+    # TkScrollbarのスクロールバー付きにする
+    frame = TkFrame.new(top, width: w, background: "red", height: MHEIGHT).place("x" => 0, "y" => h)
+    yscr = TkScrollbar.new(frame).pack("fill"=>"y", "side"=>"right", "expand" => true)
+    text = TkText.new(frame, height: 6).pack("fill" => "both", "side"=>"right", "expand" => true)
+    text.yscrollbar(yscr)
+
+    # 盤がクリックされた場所の動作を定義、クリックされるとclickBoardが呼び出される
+    canvas.bind("ButtonPress-1", proc{|x,y|
+                  self.clickBoard(canvas, text, x, y)
+                  },"%x %y")
+    
+    return canvas
+  end
+
+  def drawBoard(canvas)
+    # マスを1つ描く(サンプル)
+    rect = TkcRectangle.new(canvas, MARGIN, MARGIN, MARGIN + SWIDTH, MARGIN + SWIDTH)
+    rect.configure(fill: "#00aa00")
+
+    # 8x8=64個のマスを描く
+
+  end
+
   # 「盤を描画して，手を入力をしてもらう」のを繰り返す（暫定テキスト版）
   def loop()
     while true do
@@ -442,4 +495,6 @@ board = Board.new
 # 盤を初期化
 board.init
 # loopの実行（コメントは後で外す）
-board.loop
+#board.loop
+canvas = board.makeWindow
+Tk.mainloop
