@@ -401,8 +401,8 @@ class Board
 
   def drawBoard(canvas)
     # マスを1つ描く(サンプル)
-    rect = TkcRectangle.new(canvas, MARGIN, MARGIN, MARGIN + SWIDTH, MARGIN + SWIDTH)
-    rect.configure(fill: "#00aa00")
+    #rect = TkcRectangle.new(canvas, MARGIN, MARGIN, MARGIN + SWIDTH, MARGIN + SWIDTH)
+    #rect.configure(fill: "#00aa00")
 
     # 8x8=64個のマスを描く
     for x in 0..BOARDSIZE-1 do
@@ -411,6 +411,22 @@ class Board
         rect.configure(fill: "#00aa00")
       end
     end
+  end
+
+  # すべての石を描画
+  def drawAllDisks(canvas)
+    for x in 1..BOARDSIZE do
+      for y in 1..BOARDSIZE do
+        # 石の描画
+        if @rawBoard[x][y] == -1 # その値がBLACKかWHITEなら以下を実行
+          disk = TkcOval.new(canvas, MARGIN+SWIDTH*(x-1), MARGIN+SWIDTH*(y-1), MARGIN+SWIDTH*x, MARGIN+SWIDTH*y)  # 適切な位置に円を描く
+          disk.configure(fill: "white")
+        elsif @rawBoard[x][y] == 1
+          disk = TkcOval.new(canvas, MARGIN+SWIDTH*(x-1), MARGIN+SWIDTH*(y-1), MARGIN+SWIDTH*x, MARGIN+SWIDTH*y)  # 適切な位置に円を描く
+          disk.configure(fill: "black")
+        end
+      end
+    end  
   end
 
 =begin
@@ -504,4 +520,5 @@ board.init
 # loopの実行（コメントは後で外す）
 #board.loop
 canvas = board.makeWindow
+board.drawAllDisks(canvas)
 Tk.mainloop
