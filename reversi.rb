@@ -287,6 +287,57 @@ class Board
     end
   end
 
+  def isGameOver
+    # 60手に達していたら終了
+    if @turn == MAXTURNS
+      return true
+    end
+
+    # 現在の手番(@current_color)で打てる場所があればfalseを返す
+    for x in 1..BOARDSIZE do
+      for y in 1..BOARDSIZE do
+        if @movableDir[x][y] != NONE
+          return false
+        end
+      end
+    end
+
+    # 自分がパスした場合、相手に打てる手があればfalseを返す
+    for x in 1..BOARDSIZE do
+      for y in 1..BOARDSIZE do
+        if checkMobility(x, y, -@current_color) != NONE
+          return false
+        end
+      end
+    end
+
+    # 以上に当てはまらなければゲーム終了、trueを返す
+    return true
+  end
+
+  def isPass
+    # 現在の手番で打てる手があればfalseを返す
+    for x in 1..BOARDSIZE do
+      for y in 1..BOARDSIZE do
+        if @movableDir[x][y] != NONE
+          return false
+        end
+      end
+    end
+
+    # 相手の手番で打てる手があればtureを返す
+    for x in 1..BOARDSIZE do
+      for y in 1..BOARDSIZE do
+        if checkMobility(x, y, -@current_color) != NONE
+          return true
+        end
+      end
+    end
+    
+    # 相手も打てなければfalseを返す
+    return false
+  end
+
   # ここに move と loop の定義を追加
   # 石を置き，ひっくり返す
   def move(x,y)
