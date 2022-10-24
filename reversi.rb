@@ -377,7 +377,26 @@ class Board
         print("\n")
       end
       print("\n")
-      
+
+      # もし打てるところがなければゲーム終了
+      if self.isGameOver
+        print("ゲーム終了\n")
+        exit
+      end
+
+      # パスの場合
+      if self.isPass
+        if @current_color == BLACK
+          print("黒")
+        elsif
+          print("白")
+        end
+        print("はパスします\n")
+        # 手番を反転させて、@movableDirを更新
+        @current_color = -@current_color
+        self.initMovable
+      end
+        
       print("次は")
       if @current_color == BLACK 
         print("黒")
