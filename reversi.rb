@@ -429,6 +429,77 @@ class Board
     end  
   end
 
+  def clickBoard(canvas,text,x,y)
+    # クリックされた座標 (x,y)から盤の位置 (x1,y1)を得る
+    # ここに，xの値から x1を計算する
+    if MARGIN+SWIDTH*0 < x and x < MARGIN+SWIDTH*1
+      x1 = 1
+    elsif MARGIN+SWIDTH*1 < x and x < MARGIN+SWIDTH*2
+      x1 = 2
+    elsif MARGIN+SWIDTH*2 < x and x < MARGIN+SWIDTH*3
+      x1 = 3
+    elsif MARGIN+SWIDTH*3 < x and x < MARGIN+SWIDTH*4
+      x1 = 4
+    elsif MARGIN+SWIDTH*4 < x and x < MARGIN+SWIDTH*5
+      x1 = 5
+    elsif MARGIN+SWIDTH*5 < x and x < MARGIN+SWIDTH*6
+      x1 = 6
+    elsif MARGIN+SWIDTH*6 < x and x < MARGIN+SWIDTH*7
+      x1 = 7
+    elsif MARGIN+SWIDTH*7 < x and x < MARGIN+SWIDTH*8
+      x1 = 8
+    end
+
+    # ここに，yの値から y1を計算する
+    if MARGIN+SWIDTH*0 < y and y < MARGIN+SWIDTH*1
+      y1 = 1
+    elsif MARGIN+SWIDTH*1 < y and y < MARGIN+SWIDTH*2
+      y1 = 2
+    elsif MARGIN+SWIDTH*2 < y and y < MARGIN+SWIDTH*3
+      y1 = 3
+    elsif MARGIN+SWIDTH*3 < y and y < MARGIN+SWIDTH*4
+      y1 = 4
+    elsif MARGIN+SWIDTH*4 < y and y < MARGIN+SWIDTH*5
+      y1 = 5
+    elsif MARGIN+SWIDTH*5 < y and y < MARGIN+SWIDTH*6
+      y1 = 6
+    elsif MARGIN+SWIDTH*6 < y and y < MARGIN+SWIDTH*7
+      y1 = 7
+    elsif MARGIN+SWIDTH*7 < y and y < MARGIN+SWIDTH*8
+      y1 = 8
+    end
+
+    # 座標を表示する（動作確認用）
+    msg = "(x,y) = (" + x.to_s + "," + y.to_s + ") (x1,y1) = (" + x1.to_s + "," + y1.to_s + ")\n"
+    text.insert("1.0", msg)
+
+    # 座標が盤の範囲外であれば何もせず return
+    if !((1..BOARDSIZE).include? x1) or !((1..BOARDSIZE).include? y1)
+      return
+    end
+
+    # 石を打ってひっくり返す、打てないなら何もせずreturn
+    if !self.move(x1, y1)
+      return
+    end
+
+    # 石を再描画
+    self.drawAllDisks(canvas)
+    Tk.update
+
+    # ゲーム終了
+    if self.isGameOver
+      text.insert("1.0", "ゲーム終了\n")
+    end
+
+    # パスの場合は手番を入れ替えて@movableDirを更新
+    if self.isPass
+      @current_color = -@current_color
+      self.initMovable
+      text.insert("1.0", "パス\n")
+      return
+    end
+  end
 =begin
   # 「盤を描画して，手を入力をしてもらう」のを繰り返す（暫定テキスト版）
   def loop()
