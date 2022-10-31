@@ -29,6 +29,13 @@ UPPER_RIGHT = 128
 # 盤のサイズと手数の最大数
 BOARDSIZE = 8
 MAXTURNS = 60
+
+# minmaxで探索する深さ（先を読む手数）
+LIMIT = 2
+# 残り手数がLIMIT2以下になったら最後まで読み切る
+LIMIT2 = 6
+# スコアの最大値
+MAXSCORE = 10000
 	
 # 盤を表すクラスの定義
 class Board
@@ -499,7 +506,91 @@ class Board
       text.insert("1.0", "パス\n")
       return
     end
+    
+    # ゲーム終了か，人間が打てるようになるまでコンピュータの手を生成
+    loop do
+      maxScore = -MAXSCORE
+      xmax = 0
+      ymax = 0
+
+      # すべての打てる手を生成し，それぞれの手を minmax で探索
+      for x in 1..BOARDSIZE do
+        for y in 1..BOARDSIZE do
+          if @movableDir[x][y] != NONE
+            # 状態を保存
+            tmpBoard = @rawBoard.map(&:dup)
+            tmpDir = @movableDir.map(&:dup)
+            tmpTurns = @turns
+            tmpColor = @current_color
+
+            self.move(x,y)
+            # 残り手数が LIMIT2 以下の場合は，終盤とする（最後まで読み切る）
+            if MAXTURNS - @turns <= LIMIT2
+              mode = 1
+              limit = LIMIT2
+            # そうでなければ，終盤でない（深さ LIMIT まで探索）
+            else
+              mode = 0
+              limit = LIMIT
+            end
+            
+            score = -minmax(limit - 1, mode)
+            text.insert('1.0', "(x,y) = ("+ x.to_s + ","+ y.to_s + "),score = " + score.to_s + "\n")
+
+            # 元に戻す
+            @rawBoard = tmpBoard.map(&:dup)
+            @movableDir = tmpDir.map(&:dup)
+            @turns = tmpTurns
+            @current_color = tmpColor
+
+            if maxScore < score
+              maxScore = score
+              xmax = x
+              ymax = y
+            end
+          end
+        end
+      end
+
+      # 最もスコアの高いところに石を置く
+      self.move(xmax,ymax)
+      self.drawAllDisks(canvas)
+      text.insert('1.0', "選択されたのは (x,y) = ("+ xmax.to_s + ","+ ymax.to_s + "),score = " + maxScore.to_s + "\n")
+      Tk.update
+
+      # ゲーム終了ならループを抜ける
+      if self.isGameOver
+        text.insert('1.0', "ゲーム終了\n")
+        break
+      # 人間がパスの場合，手番を入れ替える（ループは抜けない）
+      elsif self.isPass
+        @current_color = -@current_color
+        self.initMovable
+        text.insert('1.0', "パス\n")
+      # そうでなければ，人間が打てるのでループを抜ける
+      else
+        break
+      end
+    end
   end
+
+  def minmax(limit, mode)
+
+    # 探索はせず、単に評価値を返す（暫定版）
+    # 先の手を読むのは後ほど
+    return self.evaluate(mode)
+
+  end
+
+  # 評価関数（暫定版）
+  def evaluate(mode)
+
+    # 乱数をスコアとして生成する
+    score = rand(10)
+
+    return score
+  end
+
 =begin
   # 「盤を描画して，手を入力をしてもらう」のを繰り返す（暫定テキスト版）
   def loop()
