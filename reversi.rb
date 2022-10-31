@@ -560,7 +560,29 @@ class Board
 
       # ゲーム終了ならループを抜ける
       if self.isGameOver
-        text.insert('1.0', "ゲーム終了\n")
+        score_black = 0
+        score_white = 0
+  
+        for x in 1..BOARDSIZE do
+          for y in 1..BOARDSIZE do
+            # @rawBoard[x][y] が @current_color ならば，socre を 1 加算
+            if @rawBoard[x][y] == WHITE
+              score_white += 1
+            end
+            # @rawBoard[x][y] が -@current_color ならば，socre を 1 減算
+            if @rawBoard[x][y] == BLACK
+              score_black += 1
+            end
+          end
+        end
+
+        if score_black > score_white
+          text.insert('1.0', "ゲーム終了\n" + "石差" + (score_black - score_white).to_s + "で黒の勝ちです。\n")
+        elsif score_black < score_white
+          text.insert('1.0', "ゲーム終了\n" + "石差" + (score_white - score_black).to_s + "で白の勝ちです。\n")
+        else
+          text.insert('1.0', "ゲーム終了\n" + "引き分けです。\n")
+        end
         break
       # 人間がパスの場合，手番を入れ替える（ループは抜けない）
       elsif self.isPass
