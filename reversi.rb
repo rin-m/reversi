@@ -582,11 +582,33 @@ class Board
 
   end
 
+  # 石の数を数える
+  def numDisks
+    score = 0
+
+    # 単純に「石の数が多いほど有利！」と考えて
+    # 「自分 (@current_color) の数」 - 「相手 (-@current_color) の石の数」
+    # を計算し，score に代入して return する
+    for x in 1..BOARDSIZE do
+      for y in 1..BOARDSIZE do
+        # @rawBoard[x][y] が @current_color ならば，socre を 1 加算
+        if @rawBoard[x][y] == @current_color
+          score += 1
+        end
+        # @rawBoard[x][y] が -@current_color ならば，socre を 1 減算
+        if @rawBoard[x][y] == -@current_color
+          score -= 1
+        end
+      end
+    end
+    return score
+  end
+
   # 評価関数（暫定版）
   def evaluate(mode)
 
     # 乱数をスコアとして生成する
-    score = rand(10)
+    score = self.numDisks
 
     return score
   end
