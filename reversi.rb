@@ -597,11 +597,73 @@ class Board
   end
 
   def minmax(limit, mode)
+    score = 0
+    maxScore = -MAXSCORE
+    
+    # 探索の深さ限度に到達したか，ゲーム終了の場合は評価値を返す
+    if limit == 0 or self.isGameOver
+      return self.evaluate(mode)
+    end
+      
+    # パスの場合は，手番を変えて探索を続ける
+    if self.isPass
+    
+      # 状態を保存
+      tmpBoard = @rawBoard.map(&:dup)
+      tmpDir = @movableDir.map(&:dup)
+      tmpTurns = @turns
+      tmpColor = @current_color
+      
+      # 色を反転して探索
+      @current_color = -@current_color
+      self.initMovable
+      score = -minmax(limit-1, mode)
+      
+      # 元に戻す
+      @rawBoard = tmpBoard.map(&:dup)
+      @movableDir = tmpDir.map(&:dup)
+      @turns = tmpTurns
+      @current_color = tmpColor
 
-    # 探索はせず、単に評価値を返す（暫定版）
-    # 先の手を読むのは後ほど
-    return self.evaluate(mode)
+      return score
+    end
 
+    # パスでない場合は，すべての打てる手を生成し，スコアの最も高いものを探す
+    for x in 1..BOARDSIZE do
+      for y in 1..BOARDSIZE do
+        if @movableDir[x][y] != NONE
+
+        # 現在の盤の状態を保存
+        # p.2 の 13-16 行目（または上記の 15-18 行目）と同様に，
+        # 盤の状態を保存するコードを書く
+        tmpBoard = @rawBoard.map(&:dup)
+        tmpDir = @movableDir.map(&:dup)
+        tmpTurns = @turns
+        tmpColor = @current_color       
+        
+        # 石を打つ
+        self.move(x,y)
+
+        # minmax を呼び出す
+        # p.2 の 29 行目と同様に，
+        # minmax を呼び出して，得られたスコアを score に代入するコードを書く
+        score = -minmax(limit - 1, mode)
+        
+        # 盤の状態を元に戻す
+        # p.3 の 34-37 行目（または上記の 26-29 行目）と同様に，
+        # 盤の状態を元に戻すコードを書く
+        @rawBoard = tmpBoard.map(&:dup)
+        @movableDir = tmpDir.map(&:dup)
+        @turns = tmpTurns
+        @current_color = tmpColor        
+        
+          if maxScore < score
+            maxScore = score
+          end
+        end
+      end
+    end
+    return maxScore
   end
 
   # 石の数を数える
