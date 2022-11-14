@@ -704,9 +704,9 @@ class Board
     w2 = 8
 
     if mode == 1
-      score = self.numDisks
+      score = self.numDisks + self.checkX
     else
-      score = w1 * self.movility + w2 * self.checkCorner
+      score = w1 * self.movility + w2 * self.checkCorner + self.checkX
     end
 
     return score
@@ -771,9 +771,50 @@ class Board
         end
       end
     end
+    return score
+  end
+
+  def checkX
+    score = 0
+
+    if @rawBoard[1][1] != NONE
+      if @rawBoard[2][2] == @current_color
+        score += 1
+      end
+      if @rawBoard[2][2] == -@current_color
+        score -= 1
+      end
+    end
+
+    if @rawBoard[1][8] != NONE
+      if @rawBoard[2][7] == @current_color
+        score += 1
+      end
+      if @rawBoard[2][7] == -@current_color
+        score -= 1
+      end
+    end
+
+    if @rawBoard[8][1] != NONE
+      if @rawBoard[7][2] == @current_color
+        score += 1
+      end
+      if @rawBoard[7][2] == -@current_color
+        score -= 1
+      end
+    end
+
+    if @rawBoard[8][8] != NONE
+      if @rawBoard[7][7] == @current_color
+        score += 1
+      end
+      if @rawBoard[7][7] == -@current_color
+        score -= 1
+      end
+    end
 
     return score
-  end  
+  end
 
 =begin
   # 「盤を描画して，手を入力をしてもらう」のを繰り返す（暫定テキスト版）
