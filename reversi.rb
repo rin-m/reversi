@@ -36,6 +36,9 @@ LIMIT = 2
 LIMIT2 = 6
 # スコアの最大値
 MAXSCORE = 10000
+
+# ボタンの表示領域の高さ
+BHEIGHT = 25
 	
 # 盤を表すクラスの定義
 class Board
@@ -377,7 +380,7 @@ class Board
     h = SWIDTH * 8 + MARGIN * 2
 
     # ルートウィンドウ
-    top = TkRoot.new(title: "Othello", width: w, height: h + MHEIGHT)
+    top = TkRoot.new(title: 'Othello', width: w, height: h + MHEIGHT + BHEIGHT)
 
     # 盤を描くためのキャンバス
     canvas = TkCanvas.new(top, width: w, height: h, borderwidth: 0, highlightthickness: 0, background: "darkgreen").place("x" => 0, "y" => 0)
@@ -391,9 +394,14 @@ class Board
     # 8x8のマス目を描く
     self.drawBoard(canvas)
 
+    # 終了ボタンと再スタートボタン
+    bframe = TkFrame.new(top, width: w, height: BHEIGHT).place('x' => '0', 'y' => h)
+    TkButton.new(bframe, text: 'プログラム終了', command: proc{exit}).pack('side' => 'left')
+    TkButton.new(bframe, text: '再スタート', command: proc{reset(canvas)}).pack('side' => 'left')
+
     # 動作確認用メッセージの表示領域, TkTextでテキストを表示
     # TkScrollbarのスクロールバー付きにする
-    frame = TkFrame.new(top, width: w, background: "red", height: MHEIGHT).place("x" => 0, "y" => h)
+    frame = TkFrame.new(top, width: w, background: "red", height: MHEIGHT).place("x" => 0, "y" => h + BHEIGHT)
     yscr = TkScrollbar.new(frame).pack("fill"=>"y", "side"=>"right", "expand" => true)
     text = TkText.new(frame, height: 6).pack("fill" => "both", "side"=>"right", "expand" => true)
     text.yscrollbar(yscr)
@@ -695,6 +703,23 @@ class Board
     score = self.numDisks
 
     return score
+  end
+
+  # 再スタートボタンが押された時に呼び出されるメソッド
+  def reset(canvas)
+    res = TkDialog.new('message'=>' 黒と白，どちらにします？','buttons'=>' 黒にする 白にする', 'default'=>0).value
+
+    # 盤を初期化
+    self.init
+
+    # 人間が白を選んだ場合，まずコンピュータが黒で (4,3) に打つ
+    if res == 1
+      self.move(4,3)
+    end
+
+    # 盤と石を再描画
+    self.drawBoard(canvas)
+    self.drawAllDisks(canvas)
   end
 
 =begin
