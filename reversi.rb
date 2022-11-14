@@ -696,11 +696,19 @@ class Board
     return score
   end
 
-  # 評価関数（暫定版）
+  # 評価関数
   def evaluate(mode)
 
-    # 乱数をスコアとして生成する
-    score = self.numDisks
+    # mode の値が 1（すなわち，終盤）の場合，
+    if mode == 1
+      # score に numDisks メソッドの結果を代入する
+      score = self.numDisks
+    # そうでなければ，
+    else
+      # 着手可能数で評価することとし，
+      # score に movility メソッドの結果を代入する
+      score = self.movility
+    end
 
     return score
   end
@@ -720,6 +728,30 @@ class Board
     # 盤と石を再描画
     self.drawBoard(canvas)
     self.drawAllDisks(canvas)
+  end
+
+  def movility
+    score = 0
+
+    # 打てる場所が多いほど有利と考えて，
+    # 「自分の打てるマスの数」- 「相手の打てるマスの数」を計算する
+    for x in 1..BOARDSIZE do
+      for y in 1..BOARDSIZE do
+        # 自分の手数：@movableDir[x][y] の値を調べて，
+        if @movableDir[x][y] != NONE
+          # NONE でなければ
+          # score に 1 加算する
+          score += 1
+        # 相手の手数：self.checkMobility(x,y,-@current_color) の値を調べて，
+        end
+        if self.checkMobility(x,y,-@current_color) != NONE
+          # NONE でなければ
+          # score を 1 減算する
+          score -= 1
+        end
+      end
+    end
+    return score
   end
 
 =begin
