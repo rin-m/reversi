@@ -696,18 +696,17 @@ class Board
     return score
   end
 
-  # 評価関数
+  # 評価関数(改良版)
   def evaluate(mode)
 
-    # mode の値が 1（すなわち，終盤）の場合，
+    # 重みを設定（各自でいろいろな値を試してみる．w2 は大きめの方がよい）
+    w1 = 4
+    w2 = 8
+
     if mode == 1
-      # score に numDisks メソッドの結果を代入する
       score = self.numDisks
-    # そうでなければ，
     else
-      # 着手可能数で評価することとし，
-      # score に movility メソッドの結果を代入する
-      score = self.movility
+      score = w1 * self.movility + w2 * self.checkCorner
     end
 
     return score
@@ -753,6 +752,28 @@ class Board
     end
     return score
   end
+
+  # 隅に石が置かれているかを評価する
+  def checkCorner
+    score = 0
+
+    for x in [1,BOARDSIZE] do
+      for y in [1,BOARDSIZE] do
+        # @rawBoard[x][y] が自分の石 (@current_color) ならば
+        if @rawBoard[x][y] == @current_color
+        # score に 1 加算
+          score += 1
+        end
+        # @rawBoard[x][y] が相手の石 (-@current_color) ならば
+        if @rawBoard[x][y] == -@current_color
+        # score を 1 減算
+          score -= 1
+        end
+      end
+    end
+
+    return score
+  end  
 
 =begin
   # 「盤を描画して，手を入力をしてもらう」のを繰り返す（暫定テキスト版）
