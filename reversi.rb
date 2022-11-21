@@ -706,9 +706,9 @@ class Board
     w2 = 8
 
     if mode == 1
-      score = self.numDisks + self.checkX
+      score = self.numDisks + self.checkX + self.checkC
     else
-      score = w1 * self.movility + w2 * self.checkCorner + self.checkX
+      score = w1 * self.movility + w2 * self.checkCorner + self.checkX + self.checkC
     end
 
     return score
@@ -815,6 +815,38 @@ class Board
       end
     end
 
+    return score
+  end
+
+  def checkC
+    score = 0
+    count_line = 0
+
+    for y in 1..BOARDSIZE do
+      if y == 1 or y == 8
+        for x in 1..BOARDSIZE do
+          if @rawBoard[x][y] != NONE
+            count_line += 1
+          end
+          if count_line == 1 and (@rawBoard[2][y] == @current_color or @rawBoard[7][y] == @current_color)
+            score -= 1
+          end
+        end
+      end
+    end
+
+    for x in 1..BOARDSIZE do
+      if x == 1 or x == 8
+        for y in 1..BOARDSIZE do
+          if @rawBoard[x][y] != NONE
+            count_line += 1
+          end
+          if count_line == 1 and (@rawBoard[x][2] == @current_color or @rawBoard[x][7] == @current_color)
+            score -= 1
+          end
+        end
+      end
+    end
     return score
   end
 end
