@@ -542,7 +542,7 @@ class Board
               limit = LIMIT
             end
             
-            score = -minmax(limit - 1, mode)
+            score = -alphabeta(limit - 1, mode, -MAXSCORE, MAXSCORE)
             text.insert('1.0', "(x,y) = ("+ x.to_s + ","+ y.to_s + "),score = " + score.to_s + "\n")
 
             # 元に戻す
@@ -604,7 +604,7 @@ class Board
     end
   end
 
-  def minmax(limit, mode)
+  def alphabeta(limit, mode, alpha, beta)
     score = 0
     maxScore = -MAXSCORE
     
@@ -625,7 +625,7 @@ class Board
       # 色を反転して探索
       @current_color = -@current_color
       self.initMovable
-      score = -minmax(limit-1, mode)
+      score = -alphabeta(limit - 1, mode, -beta, -alpha)
       
       # 元に戻す
       @rawBoard = tmpBoard.map(&:dup)
@@ -641,37 +641,39 @@ class Board
       for y in 1..BOARDSIZE do
         if @movableDir[x][y] != NONE
 
-        # 現在の盤の状態を保存
-        # p.2 の 13-16 行目（または上記の 15-18 行目）と同様に，
-        # 盤の状態を保存するコードを書く
-        tmpBoard = @rawBoard.map(&:dup)
-        tmpDir = @movableDir.map(&:dup)
-        tmpTurns = @turns
-        tmpColor = @current_color       
-        
-        # 石を打つ
-        self.move(x,y)
+          # 現在の盤の状態を保存
+          # p.2 の 13-16 行目（または上記の 15-18 行目）と同様に，
+          # 盤の状態を保存するコードを書く
+          tmpBoard = @rawBoard.map(&:dup)
+          tmpDir = @movableDir.map(&:dup)
+          tmpTurns = @turns
+          tmpColor = @current_color       
+          
+          # 石を打つ
+          self.move(x,y)
 
-        # minmax を呼び出す
-        # p.2 の 29 行目と同様に，
-        # minmax を呼び出して，得られたスコアを score に代入するコードを書く
-        score = -minmax(limit - 1, mode)
-        
-        # 盤の状態を元に戻す
-        # p.3 の 34-37 行目（または上記の 26-29 行目）と同様に，
-        # 盤の状態を元に戻すコードを書く
-        @rawBoard = tmpBoard.map(&:dup)
-        @movableDir = tmpDir.map(&:dup)
-        @turns = tmpTurns
-        @current_color = tmpColor        
-        
-          if maxScore < score
-            maxScore = score
+          # alphabetaを呼び出す
+          score = -alphabeta(limit - 1, mode, -beta, -alpha)
+          
+          # 盤の状態を元に戻す
+          # p.3 の 34-37 行目（または上記の 26-29 行目）と同様に，
+          # 盤の状態を元に戻すコードを書く
+          @rawBoard = tmpBoard.map(&:dup)
+          @movableDir = tmpDir.map(&:dup)
+          @turns = tmpTurns
+          @current_color = tmpColor
+          
+          if score > alpha
+            alpha = score
+          end
+
+          if alpha >= beta
+            return alpha
           end
         end
       end
     end
-    return maxScore
+    return alpha
   end
 
   # 石の数を数える
