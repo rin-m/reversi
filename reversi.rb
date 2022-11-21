@@ -31,9 +31,9 @@ BOARDSIZE = 8
 MAXTURNS = 60
 
 # minmaxで探索する深さ（先を読む手数）
-LIMIT = 2
+LIMIT = 5
 # 残り手数がLIMIT2以下になったら最後まで読み切る
-LIMIT2 = 6
+LIMIT2 = 10
 # スコアの最大値
 MAXSCORE = 10000
 
