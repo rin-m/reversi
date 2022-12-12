@@ -706,9 +706,9 @@ class Board
     w2 = 40
 
     if mode == 1
-      score = self.numDisks + self.checkX + self.checkC
+      score = self.numDisks + self.checkX + self.checkC + self.fixed
     else
-      score = w1 * self.movility + w2 * self.checkCorner + self.checkX + self.checkC
+      score = w1 * self.movility + w2 * self.checkCorner + self.checkX + self.checkC+ self.fixed
     end
 
     return score
@@ -849,6 +849,120 @@ class Board
     end
     return score
   end
+
+  # 確定石
+  def fixed
+    score = 0
+    n=0
+
+    for x in [1,BOARDSIZE] do
+      for y in [1,BOARDSIZE] do
+        # @rawBoard[x][y] が自分の石 (@current_color) ならば
+        if @rawBoard[x][y] == @current_color
+          if x == 1 and y == 1
+            n=0
+            while @rawBoard[x+n][y] == @current_color do
+              n += 1
+              score += 1
+            end
+            n=0
+            while @rawBoard[x][y+n] == @current_color do
+              n += 1
+              score += 1
+            end
+          end
+          if x == 1 and y == BOARDSIZE
+            n=0
+            while @rawBoard[x+n][y] == @current_color do
+              n += 1
+              score += 1
+            end
+            n=0
+            while @rawBoard[x][y-n] == @current_color do
+              n += 1
+              score += 1
+            end
+          end
+          if x == BOARDSIZE and y == 1
+            n=0
+            while @rawBoard[x-n][y] == @current_color do
+              n += 1
+              score += 1
+            end
+            n=0
+            while @rawBoard[x][y+n] == @current_color do
+              n += 1
+              score += 1
+            end
+          end
+          if x == BOARDSIZE and y == BOARDSIZE
+            n=0
+            while @rawBoard[x-n][y] == @current_color do
+              n += 1
+              score += 1
+            end
+            n=0
+            while @rawBoard[x][y-n] == @current_color do
+              n += 1
+              score += 1
+            end
+          end
+        end
+        if @rawBoard[x][y] == -@current_color
+          if x == 1 and y == 1
+            n=0
+            while @rawBoard[x+n][y] == -@current_color do
+              n += 1
+              score -= 1
+            end
+            n=0
+            while @rawBoard[x][y+n] == -@current_color do
+              n += 1
+              score -= 1
+            end
+          end
+          if x == 1 and y == BOARDSIZE
+            n=0
+            while @rawBoard[x+n][y] == -@current_color do
+              n += 1
+              score -= 1
+            end
+            n=0
+            while @rawBoard[x][y-n] == -@current_color do
+              n += 1
+              score -= 1
+            end
+          end
+          if x == BOARDSIZE and y == 1
+            n=0
+            while @rawBoard[x-n][y] == -@current_color do
+              n += 1
+              score -= 1
+            end
+            n=0
+            while @rawBoard[x][y+n] == -@current_color do
+              n += 1
+              score -= 1
+            end
+          end
+          if x == BOARDSIZE and y == BOARDSIZE
+            n=0
+            while @rawBoard[x-n][y] == -@current_color do
+              n += 1
+              score -= 1
+            end
+            n=0
+            while @rawBoard[x][y-n] == -@current_color do
+              n += 1
+              score -= 1
+            end
+          end
+        end
+      end
+    end
+    return score
+  end
+
 end
 
 # Boardインスタンスの生成
