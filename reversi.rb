@@ -703,7 +703,7 @@ class Board
 
     # 重みを設定（各自でいろいろな値を試してみる．w2 は大きめの方がよい）
     w1 = 4
-    w2 = 8
+    w2 = 40
 
     if mode == 1
       score = self.numDisks + self.checkX + self.checkC
